@@ -1,0 +1,618 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Yatzy Royale - Premium 2-Player Scoresheet</title>
+  <!-- SEO & Social Meta Tags -->
+  <meta name="description" content="A gorgeous, fully automated 2-player Yatzy scoresheet and virtual roller. Experience dark-mode aesthetics, custom sound effects, 3D CSS dice, and auto-score calculation.">
+  <meta name="keywords" content="yatzy, scoresheet, dice, two player, board game, scores, auto calculator">
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="src/styles/styles.css">
+</head>
+<body>
+  <!-- Ambient Background Gradients -->
+  <div class="ambient-glow glow-1"></div>
+  <div class="ambient-glow glow-2"></div>
+  <div class="ambient-glow glow-3"></div>
+
+  <div class="app-container">
+    <!-- Header -->
+    <header class="app-header">
+      <div class="logo-area">
+        <span class="logo-icon">🎲</span>
+        <div>
+          <h1>YATZY <span class="accent-text">ROYALE</span></h1>
+          <p class="subtitle">Premium 2-Player Scoresheet &amp; Dice Roller</p>
+        </div>
+      </div>
+      <div class="header-actions">
+        <a href="https://github.com/clmcgrath/yatzy-royale" target="_blank" rel="noopener noreferrer" class="btn btn-icon" title="View Source on GitHub">
+          <svg class="icon" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M12 .297c-6.63 0-12 5.373-12 12 0 5.303 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61C4.422 18.07 3.633 17.7 3.633 17.7c-1.087-.744.084-.729.084-.729 1.205.084 1.838 1.236 1.838 1.236 1.07 1.835 2.809 1.305 3.495.998.108-.776.417-1.305.76-1.605-2.665-.3-5.466-1.332-5.466-5.93 0-1.31.465-2.38 1.235-3.22-.135-.303-.54-1.523.105-3.176 0 0 1.005-.322 3.3 1.23.96-.267 1.98-.399 3-.405 1.02.006 2.04.138 3 .405 2.28-1.552 3.285-1.23 3.285-1.23.645 1.653.24 2.873.12 3.176.765.84 1.23 1.91 1.23 3.22 0 4.61-2.805 5.625-5.475 5.92.42.36.81 1.096.81 2.22 0 1.606-.015 2.896-.015 3.286 0 .315.21.69.825.57C20.565 22.092 24 17.592 24 12.297c0-6.627-5.373-12-12-12"/>
+          </svg>
+        </a>
+        <button id="sound-toggle" class="btn btn-icon" title="Toggle Sound">
+          <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path id="sound-icon-path" d="M11 5L6 9H2v6h4l5 4V5zM15.54 8.46a5 5 0 0 1 0 7.07" />
+          </svg>
+        </button>
+        <button id="new-game-btn" class="btn btn-secondary">
+          <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M21.5 2v6h-6M21.34 15.57a10 10 0 1 1-.57-8.38l5.67-5.67"/>
+          </svg>
+          Reset Game
+        </button>
+      </div>
+    </header>
+
+    <!-- Turn Banner Indicator -->
+    <section class="turn-banner" id="turn-banner">
+      <div class="turn-content">
+        <div class="active-indicator"></div>
+        <span id="turn-text">Player 1's Turn</span>
+      </div>
+    </section>
+
+    <!-- Main Workspace Layout -->
+    <main class="game-layout">
+      <!-- Left Column: Controller / Dice Tray -->
+      <section class="dice-section card">
+        <div class="card-header">
+          <h2>Dice Controller</h2>
+          <div class="mode-toggle">
+            <span class="toggle-label">Manual Dice</span>
+            <label class="switch">
+              <input type="checkbox" id="mode-checkbox">
+              <span class="slider"></span>
+            </label>
+            <span class="toggle-label active">Virtual Roller</span>
+          </div>
+        </div>
+
+        <!-- Virtual Roller Container -->
+        <div id="virtual-roller-container" class="virtual-roller-container">
+          <!-- 3D Dice Tray -->
+          <div class="dice-tray" id="dice-tray">
+            <!-- Die 1 -->
+            <div class="die-wrapper" data-index="0">
+              <div class="die-cube" id="die-0">
+                <div class="die-face face-1">
+                  <div class="dot center"></div>
+                </div>
+                <div class="die-face face-2">
+                  <div class="dot top-right"></div>
+                  <div class="dot bottom-left"></div>
+                </div>
+                <div class="die-face face-3">
+                  <div class="dot top-right"></div>
+                  <div class="dot center"></div>
+                  <div class="dot bottom-left"></div>
+                </div>
+                <div class="die-face face-4">
+                  <div class="dot top-left"></div>
+                  <div class="dot top-right"></div>
+                  <div class="dot bottom-left"></div>
+                  <div class="dot bottom-right"></div>
+                </div>
+                <div class="die-face face-5">
+                  <div class="dot top-left"></div>
+                  <div class="dot top-right"></div>
+                  <div class="dot center"></div>
+                  <div class="dot bottom-left"></div>
+                  <div class="dot bottom-right"></div>
+                </div>
+                <div class="die-face face-6">
+                  <div class="dot top-left"></div>
+                  <div class="dot top-right"></div>
+                  <div class="dot middle-left"></div>
+                  <div class="dot middle-right"></div>
+                  <div class="dot bottom-left"></div>
+                  <div class="dot bottom-right"></div>
+                </div>
+              </div>
+              <div class="hold-badge">HOLD</div>
+            </div>
+
+            <!-- Die 2 -->
+            <div class="die-wrapper" data-index="1">
+              <div class="die-cube" id="die-1">
+                <div class="die-face face-1">
+                  <div class="dot center"></div>
+                </div>
+                <div class="die-face face-2">
+                  <div class="dot top-right"></div>
+                  <div class="dot bottom-left"></div>
+                </div>
+                <div class="die-face face-3">
+                  <div class="dot top-right"></div>
+                  <div class="dot center"></div>
+                  <div class="dot bottom-left"></div>
+                </div>
+                <div class="die-face face-4">
+                  <div class="dot top-left"></div>
+                  <div class="dot top-right"></div>
+                  <div class="dot bottom-left"></div>
+                  <div class="dot bottom-right"></div>
+                </div>
+                <div class="die-face face-5">
+                  <div class="dot top-left"></div>
+                  <div class="dot top-right"></div>
+                  <div class="dot center"></div>
+                  <div class="dot bottom-left"></div>
+                  <div class="dot bottom-right"></div>
+                </div>
+                <div class="die-face face-6">
+                  <div class="dot top-left"></div>
+                  <div class="dot top-right"></div>
+                  <div class="dot middle-left"></div>
+                  <div class="dot middle-right"></div>
+                  <div class="dot bottom-left"></div>
+                  <div class="dot bottom-right"></div>
+                </div>
+              </div>
+              <div class="hold-badge">HOLD</div>
+            </div>
+
+            <!-- Die 3 -->
+            <div class="die-wrapper" data-index="2">
+              <div class="die-cube" id="die-2">
+                <div class="die-face face-1">
+                  <div class="dot center"></div>
+                </div>
+                <div class="die-face face-2">
+                  <div class="dot top-right"></div>
+                  <div class="dot bottom-left"></div>
+                </div>
+                <div class="die-face face-3">
+                  <div class="dot top-right"></div>
+                  <div class="dot center"></div>
+                  <div class="dot bottom-left"></div>
+                </div>
+                <div class="die-face face-4">
+                  <div class="dot top-left"></div>
+                  <div class="dot top-right"></div>
+                  <div class="dot bottom-left"></div>
+                  <div class="dot bottom-right"></div>
+                </div>
+                <div class="die-face face-5">
+                  <div class="dot top-left"></div>
+                  <div class="dot top-right"></div>
+                  <div class="dot center"></div>
+                  <div class="dot bottom-left"></div>
+                  <div class="dot bottom-right"></div>
+                </div>
+                <div class="die-face face-6">
+                  <div class="dot top-left"></div>
+                  <div class="dot top-right"></div>
+                  <div class="dot middle-left"></div>
+                  <div class="dot middle-right"></div>
+                  <div class="dot bottom-left"></div>
+                  <div class="dot bottom-right"></div>
+                </div>
+              </div>
+              <div class="hold-badge">HOLD</div>
+            </div>
+
+            <!-- Die 4 -->
+            <div class="die-wrapper" data-index="3">
+              <div class="die-cube" id="die-3">
+                <div class="die-face face-1">
+                  <div class="dot center"></div>
+                </div>
+                <div class="die-face face-2">
+                  <div class="dot top-right"></div>
+                  <div class="dot bottom-left"></div>
+                </div>
+                <div class="die-face face-3">
+                  <div class="dot top-right"></div>
+                  <div class="dot center"></div>
+                  <div class="dot bottom-left"></div>
+                </div>
+                <div class="die-face face-4">
+                  <div class="dot top-left"></div>
+                  <div class="dot top-right"></div>
+                  <div class="dot bottom-left"></div>
+                  <div class="dot bottom-right"></div>
+                </div>
+                <div class="die-face face-5">
+                  <div class="dot top-left"></div>
+                  <div class="dot top-right"></div>
+                  <div class="dot center"></div>
+                  <div class="dot bottom-left"></div>
+                  <div class="dot bottom-right"></div>
+                </div>
+                <div class="die-face face-6">
+                  <div class="dot top-left"></div>
+                  <div class="dot top-right"></div>
+                  <div class="dot middle-left"></div>
+                  <div class="dot middle-right"></div>
+                  <div class="dot bottom-left"></div>
+                  <div class="dot bottom-right"></div>
+                </div>
+              </div>
+              <div class="hold-badge">HOLD</div>
+            </div>
+
+            <!-- Die 5 -->
+            <div class="die-wrapper" data-index="4">
+              <div class="die-cube" id="die-4">
+                <div class="die-face face-1">
+                  <div class="dot center"></div>
+                </div>
+                <div class="die-face face-2">
+                  <div class="dot top-right"></div>
+                  <div class="dot bottom-left"></div>
+                </div>
+                <div class="die-face face-3">
+                  <div class="dot top-right"></div>
+                  <div class="dot center"></div>
+                  <div class="dot bottom-left"></div>
+                </div>
+                <div class="die-face face-4">
+                  <div class="dot top-left"></div>
+                  <div class="dot top-right"></div>
+                  <div class="dot bottom-left"></div>
+                  <div class="dot bottom-right"></div>
+                </div>
+                <div class="die-face face-5">
+                  <div class="dot top-left"></div>
+                  <div class="dot top-right"></div>
+                  <div class="dot center"></div>
+                  <div class="dot bottom-left"></div>
+                  <div class="dot bottom-right"></div>
+                </div>
+                <div class="die-face face-6">
+                  <div class="dot top-left"></div>
+                  <div class="dot top-right"></div>
+                  <div class="dot middle-left"></div>
+                  <div class="dot middle-right"></div>
+                  <div class="dot bottom-left"></div>
+                  <div class="dot bottom-right"></div>
+                </div>
+              </div>
+              <div class="hold-badge">HOLD</div>
+            </div>
+          </div>
+
+          <!-- Roll Control Panel -->
+          <div class="roll-control">
+            <button id="roll-btn" class="btn btn-primary btn-large">
+              <span>ROLL DICE</span>
+            </button>
+            <div class="rolls-left">
+              <span class="rolls-left-title">Rolls Left:</span>
+              <div class="rolls-dots" id="rolls-dots">
+                <span class="roll-dot active"></span>
+                <span class="roll-dot active"></span>
+                <span class="roll-dot active"></span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Manual Mode Tutorial/Banner (Hidden initially) -->
+        <div id="manual-mode-banner" class="manual-mode-banner hidden">
+          <p>💡 <strong>Manual Scoring Mode Active</strong></p>
+          <p>Roll your real physical dice, click any open score box in your column, and enter your score. Tap any value to log it.</p>
+        </div>
+
+        <!-- Instructions Panel -->
+        <div class="instructions-panel">
+          <h3>How to Play</h3>
+          <ul>
+            <li><strong>Objective</strong>: Score the most points by rolling 5 dice to make combos.</li>
+            <li><strong>Turns</strong>: Roll virtual dice up to 3 times. Click dice to "HOLD" them between rolls.</li>
+            <li><strong>Scoring</strong>: Click on an available slot in your active column to lock in your score.</li>
+            <li><strong>Upper Bonus</strong>: Score 63 or more in the upper section (Aces - Sixes) to get a <strong>+35 point bonus</strong>!</li>
+            <li><strong>Joker Rule</strong>: Subsequent Yatzys earn a <strong>+100 bonus</strong>! Mark it in the Yatzy Bonus boxes, then use the wild card to fill any open slot.</li>
+          </ul>
+        </div>
+      </section>
+
+      <!-- Right Column: Scoresheet -->
+      <section class="scoresheet-section card">
+        <!-- Player Titles & Quick Stats -->
+        <div class="players-header">
+          <div class="player-heading p1-accent" id="p1-card">
+            <span class="p-avatar">➊</span>
+            <div>
+              <h3>PLAYER 1</h3>
+              <p class="grand-total-preview" id="p1-preview-total">Grand Total: 0</p>
+            </div>
+          </div>
+          <div class="player-heading p2-accent" id="p2-card">
+            <span class="p-avatar">➋</span>
+            <div>
+              <h3>PLAYER 2</h3>
+              <p class="grand-total-preview" id="p2-preview-total">Grand Total: 0</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- The Table -->
+        <div class="table-wrapper">
+          <table class="scoresheet-table">
+            <thead>
+              <tr>
+                <th>Category</th>
+                <th class="player-col-header active" id="p1-col-header">Player 1</th>
+                <th class="player-col-header" id="p2-col-header">Player 2</th>
+              </tr>
+            </thead>
+            <tbody>
+              <!-- UPPER SECTION -->
+              <tr class="section-title-row">
+                <td colspan="3">Upper Section</td>
+              </tr>
+              <tr class="score-row" data-category="aces">
+                <td>
+                  <span class="category-name">Aces <span>⚀</span></span>
+                  <span class="category-description">Sum of 1s</span>
+                </td>
+                <td class="score-cell p1-cell" data-player="0" id="cell-0-aces">-</td>
+                <td class="score-cell p2-cell" data-player="1" id="cell-1-aces">-</td>
+              </tr>
+              <tr class="score-row" data-category="twos">
+                <td>
+                  <span class="category-name">Twos <span>⚁</span></span>
+                  <span class="category-description">Sum of 2s</span>
+                </td>
+                <td class="score-cell p1-cell" data-player="0" id="cell-0-twos">-</td>
+                <td class="score-cell p2-cell" data-player="1" id="cell-1-twos">-</td>
+              </tr>
+              <tr class="score-row" data-category="threes">
+                <td>
+                  <span class="category-name">Threes <span>⚂</span></span>
+                  <span class="category-description">Sum of 3s</span>
+                </td>
+                <td class="score-cell p1-cell" data-player="0" id="cell-0-threes">-</td>
+                <td class="score-cell p2-cell" data-player="1" id="cell-1-threes">-</td>
+              </tr>
+              <tr class="score-row" data-category="fours">
+                <td>
+                  <span class="category-name">Fours <span>⚃</span></span>
+                  <span class="category-description">Sum of 4s</span>
+                </td>
+                <td class="score-cell p1-cell" data-player="0" id="cell-0-fours">-</td>
+                <td class="score-cell p2-cell" data-player="1" id="cell-1-fours">-</td>
+              </tr>
+              <tr class="score-row" data-category="fives">
+                <td>
+                  <span class="category-name">Fives <span>⚄</span></span>
+                  <span class="category-description">Sum of 5s</span>
+                </td>
+                <td class="score-cell p1-cell" data-player="0" id="cell-0-fives">-</td>
+                <td class="score-cell p2-cell" data-player="1" id="cell-1-fives">-</td>
+              </tr>
+              <tr class="score-row" data-category="sixes">
+                <td>
+                  <span class="category-name">Sixes <span>⚅</span></span>
+                  <span class="category-description">Sum of 6s</span>
+                </td>
+                <td class="score-cell p1-cell" data-player="0" id="cell-0-sixes">-</td>
+                <td class="score-cell p2-cell" data-player="1" id="cell-1-sixes">-</td>
+              </tr>
+              <!-- UPPER CALCS -->
+              <tr class="calc-row">
+                <td>
+                  <span class="category-name font-medium">Upper Subtotal</span>
+                </td>
+                <td class="calc-cell" id="subtotal-0">0</td>
+                <td class="calc-cell" id="subtotal-1">0</td>
+              </tr>
+              <tr class="calc-row bonus-row">
+                <td>
+                  <span class="category-name font-medium">Bonus <span class="bonus-hint">(Need 63+)</span></span>
+                  <span class="bonus-progress" id="bonus-progress-row">
+                    <span class="p1-progress-helper" id="p1-bonus-helper">Need 63</span>
+                    <span class="p2-progress-helper" id="p2-bonus-helper">Need 63</span>
+                  </span>
+                </td>
+                <td class="calc-cell" id="bonus-0">0</td>
+                <td class="calc-cell" id="bonus-1">0</td>
+              </tr>
+              <tr class="calc-row total-calc-row">
+                <td>
+                  <span class="category-name">Upper Total</span>
+                </td>
+                <td class="calc-cell font-bold" id="uppertotal-0">0</td>
+                <td class="calc-cell font-bold" id="uppertotal-1">0</td>
+              </tr>
+
+              <!-- LOWER SECTION -->
+              <tr class="section-title-row">
+                <td colspan="3">Lower Section</td>
+              </tr>
+              <tr class="score-row" data-category="threeOfKind">
+                <td>
+                  <span class="category-name">3 of a Kind</span>
+                  <span class="category-description">Sum of all dice</span>
+                </td>
+                <td class="score-cell p1-cell" data-player="0" id="cell-0-threeOfKind">-</td>
+                <td class="score-cell p2-cell" data-player="1" id="cell-1-threeOfKind">-</td>
+              </tr>
+              <tr class="score-row" data-category="fourOfKind">
+                <td>
+                  <span class="category-name">4 of a Kind</span>
+                  <span class="category-description">Sum of all dice</span>
+                </td>
+                <td class="score-cell p1-cell" data-player="0" id="cell-0-fourOfKind">-</td>
+                <td class="score-cell p2-cell" data-player="1" id="cell-1-fourOfKind">-</td>
+              </tr>
+              <tr class="score-row" data-category="fullHouse">
+                <td>
+                  <span class="category-name">Full House</span>
+                  <span class="category-description">Score 25</span>
+                </td>
+                <td class="score-cell p1-cell" data-player="0" id="cell-0-fullHouse">-</td>
+                <td class="score-cell p2-cell" data-player="1" id="cell-1-fullHouse">-</td>
+              </tr>
+              <tr class="score-row" data-category="smallStraight">
+                <td>
+                  <span class="category-name">Small Straight</span>
+                  <span class="category-description">Score 30 (4 in row)</span>
+                </td>
+                <td class="score-cell p1-cell" data-player="0" id="cell-0-smallStraight">-</td>
+                <td class="score-cell p2-cell" data-player="1" id="cell-1-smallStraight">-</td>
+              </tr>
+              <tr class="score-row" data-category="largeStraight">
+                <td>
+                  <span class="category-name">Large Straight</span>
+                  <span class="category-description">Score 40 (5 in row)</span>
+                </td>
+                <td class="score-cell p1-cell" data-player="0" id="cell-0-largeStraight">-</td>
+                <td class="score-cell p2-cell" data-player="1" id="cell-1-largeStraight">-</td>
+              </tr>
+              <tr class="score-row" data-category="yahtzee">
+                <td>
+                  <span class="category-name">YATZY 🌟</span>
+                  <span class="category-description">Score 50 (5 of kind)</span>
+                </td>
+                <td class="score-cell p1-cell" data-player="0" id="cell-0-yahtzee">-</td>
+                <td class="score-cell p2-cell" data-player="1" id="cell-1-yahtzee">-</td>
+              </tr>
+              <tr class="score-row" data-category="chance">
+                <td>
+                  <span class="category-name">Chance</span>
+                  <span class="category-description">Sum of all dice</span>
+                </td>
+                <td class="score-cell p1-cell" data-player="0" id="cell-0-chance">-</td>
+                <td class="score-cell p2-cell" data-player="1" id="cell-1-chance">-</td>
+              </tr>
+              
+              <!-- YATZY BONUSES -->
+              <tr class="bonus-star-row">
+                <td>
+                  <span class="category-name">Yatzy Bonus</span>
+                  <span class="category-description">+100 for each extra Yatzy</span>
+                </td>
+                <td class="bonus-stars-cell" data-player="0" id="bonus-stars-0">
+                  <div class="stars-container">
+                    <span class="star star-dot" data-index="0">★</span>
+                    <span class="star star-dot" data-index="1">★</span>
+                    <span class="star star-dot" data-index="2">★</span>
+                  </div>
+                </td>
+                <td class="bonus-stars-cell" data-player="1" id="bonus-stars-1">
+                  <div class="stars-container">
+                    <span class="star star-dot" data-index="0">★</span>
+                    <span class="star star-dot" data-index="1">★</span>
+                    <span class="star star-dot" data-index="2">★</span>
+                  </div>
+                </td>
+              </tr>
+
+              <!-- LOWER CALCS -->
+              <tr class="calc-row">
+                <td>
+                  <span class="category-name font-medium">Lower Total</span>
+                </td>
+                <td class="calc-cell" id="lowertotal-0">0</td>
+                <td class="calc-cell" id="lowertotal-1">0</td>
+              </tr>
+
+              <!-- GRAND TOTALS -->
+              <tr class="grand-total-row">
+                <td>
+                  <span class="category-name font-bold">GRAND TOTAL</span>
+                </td>
+                <td class="grand-total-cell" id="grandtotal-0">0</td>
+                <td class="grand-total-cell" id="grandtotal-1">0</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <!-- Manual Entry Number Selector Overlay / Modal -->
+  <div class="modal-backdrop hidden" id="manual-modal">
+    <div class="modal-card">
+      <div class="modal-header">
+        <h3 id="modal-title">Enter Score</h3>
+        <button class="btn-close" id="modal-close-btn">&times;</button>
+      </div>
+      <div class="modal-body">
+        <p class="modal-info" id="modal-info-text">Choose a score for player 1, category Twos:</p>
+        
+        <!-- Numeric Picker -->
+        <div class="manual-input-container">
+          <input type="number" id="manual-score-input" class="manual-input" min="0" max="100" placeholder="0">
+        </div>
+        
+        <!-- Quick Select Preset Scores -->
+        <div class="preset-title">Presets for <span id="preset-cat-name">Twos</span>:</div>
+        <div class="presets-grid" id="presets-grid">
+          <!-- Populated by JS -->
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button id="modal-cancel-btn" class="btn btn-secondary">Cancel</button>
+        <button id="modal-confirm-btn" class="btn btn-primary">Confirm Score</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Custom Confirmation Modal -->
+  <div class="modal-backdrop hidden" id="confirm-modal">
+    <div class="modal-card">
+      <div class="modal-header">
+        <h3>Reset Match?</h3>
+        <button class="btn-close" id="confirm-close-btn">&times;</button>
+      </div>
+      <div class="modal-body">
+        <p class="modal-info" style="margin-bottom: 8px;">Are you sure you want to reset all scores and start a new match? This cannot be undone.</p>
+      </div>
+      <div class="modal-footer">
+        <button id="confirm-cancel-btn" class="btn btn-secondary">Cancel</button>
+        <button id="confirm-accept-btn" class="btn btn-primary">Reset Game</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Custom Score Selection Confirmation Modal -->
+  <div class="modal-backdrop hidden" id="score-confirm-modal">
+    <div class="modal-card">
+      <div class="modal-header">
+        <h3>Confirm Score Selection</h3>
+        <button class="btn-close" id="score-confirm-close-btn">&times;</button>
+      </div>
+      <div class="modal-body">
+        <p class="modal-info" id="score-confirm-text" style="margin-bottom: 8px;">Do you want to log this score?</p>
+      </div>
+      <div class="modal-footer">
+        <button id="score-confirm-cancel-btn" class="btn btn-secondary">Cancel</button>
+        <button id="score-confirm-accept-btn" class="btn btn-primary">Confirm Score</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Winner Celebration Overlay -->
+  <div class="winner-overlay hidden" id="winner-overlay">
+    <div class="winner-card">
+      <div class="trophy">🏆</div>
+      <h2 id="winner-title">PLAYER 1 WINS!</h2>
+      <div class="winner-scores">
+        <div class="winner-score-pill player-1-pill">
+          <span>Player 1</span>
+          <strong id="winner-p1-score">0</strong>
+        </div>
+        <div class="winner-score-pill player-2-pill">
+          <span>Player 2</span>
+          <strong id="winner-p2-score">0</strong>
+        </div>
+      </div>
+      <p class="winner-congrats" id="winner-congrats-text">An absolute masterclass in rolling!</p>
+      <button id="restart-game-btn" class="btn btn-primary btn-large">Play Again</button>
+    </div>
+    <canvas class="confetti-canvas" id="confetti-canvas"></canvas>
+  </div>
+
+  <script src="src/scripts/app.js"></script>
+</body>
+</html>

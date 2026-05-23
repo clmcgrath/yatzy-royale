@@ -1,0 +1,18 @@
+# OS Files
+.DS_Store
+Thumbs.db
+lost+found/
+
+# Local configuration / IDEs
+.vscode/
+.idea/
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.swp
+
+# Logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*

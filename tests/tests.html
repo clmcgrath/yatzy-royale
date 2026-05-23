@@ -1,0 +1,448 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Yatzy Royale - Test Suite Dashboard</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+  
+  <style>
+    /* Styling to match the high-end Yatzy Royale Cyberpunk Dark Theme */
+    :root {
+      --bg-dark: #09090e;
+      --bg-card: rgba(17, 17, 28, 0.45);
+      --border-glow: rgba(99, 102, 241, 0.2);
+      --neon-purple: #c084fc;
+      --neon-cyan: #38bdf8;
+      --neon-green: #34d399;
+      --neon-red: #f87171;
+      --text-main: #f3f4f6;
+      --text-muted: #9ca3af;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background-color: var(--bg-dark);
+      color: var(--text-main);
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      min-height: 100vh;
+      overflow-x: hidden;
+      position: relative;
+    }
+
+    /* Background Ambient Gradients */
+    .ambient-glow {
+      position: fixed;
+      width: 40vw;
+      height: 40vw;
+      border-radius: 50%;
+      filter: blur(150px);
+      z-index: -1;
+      opacity: 0.15;
+      pointer-events: none;
+    }
+    .glow-1 {
+      top: -10vw;
+      left: -10vw;
+      background: var(--neon-cyan);
+    }
+    .glow-2 {
+      bottom: -10vw;
+      right: -10vw;
+      background: var(--neon-purple);
+    }
+
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 32px 16px;
+    }
+
+    /* Header styling */
+    header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 32px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+      padding-bottom: 20px;
+    }
+
+    h1 {
+      font-family: 'Outfit', sans-serif;
+      font-size: 2.2rem;
+      font-weight: 800;
+      letter-spacing: -0.5px;
+      background: linear-gradient(135deg, #fff 30%, var(--neon-cyan) 70%, var(--neon-purple) 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .subtitle {
+      font-size: 0.95rem;
+      color: var(--text-muted);
+      margin-top: 4px;
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 10px 20px;
+      border-radius: 12px;
+      font-family: 'Outfit', sans-serif;
+      font-weight: 600;
+      font-size: 0.95rem;
+      text-decoration: none;
+      transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+      cursor: pointer;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .btn-secondary {
+      background: rgba(255, 255, 255, 0.03);
+      color: var(--text-main);
+    }
+
+    .btn-secondary:hover {
+      background: rgba(255, 255, 255, 0.08);
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+    }
+
+    /* Dashboard cards */
+    .dashboard-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 16px;
+      margin-bottom: 32px;
+    }
+
+    .stat-card {
+      background: var(--bg-card);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border: 1px solid var(--border-glow);
+      border-radius: 16px;
+      padding: 24px;
+      position: relative;
+      overflow: hidden;
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+    }
+
+    .stat-card::after {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 3px;
+    }
+
+    .stat-card.total::after { background: var(--neon-cyan); }
+    .stat-card.passed::after { background: var(--neon-green); }
+    .stat-card.failed::after { background: var(--neon-red); }
+    .stat-card.percent::after { background: var(--neon-purple); }
+
+    .stat-label {
+      font-size: 0.85rem;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      color: var(--text-muted);
+      font-weight: 600;
+      margin-bottom: 8px;
+    }
+
+    .stat-value {
+      font-family: 'Outfit', sans-serif;
+      font-size: 2.2rem;
+      font-weight: 700;
+    }
+
+    .text-cyan { color: var(--neon-cyan); }
+    .text-green { color: var(--neon-green); }
+    .text-red { color: var(--neon-red); }
+    .text-purple { color: var(--neon-purple); }
+
+    /* Progress bar */
+    .progress-container {
+      background: rgba(255, 255, 255, 0.05);
+      border-radius: 12px;
+      height: 12px;
+      width: 100%;
+      overflow: hidden;
+      margin-bottom: 32px;
+      border: 1px solid rgba(255, 255, 255, 0.04);
+    }
+
+    .progress-bar-fill {
+      height: 100%;
+      width: 0%;
+      background: linear-gradient(90deg, var(--neon-cyan), var(--neon-purple));
+      transition: width 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    /* Main testing table area */
+    .test-card {
+      background: var(--bg-card);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border: 1px solid var(--border-glow);
+      border-radius: 16px;
+      padding: 24px;
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+    }
+
+    /* Filters section */
+    .filters-section {
+      display: flex;
+      gap: 16px;
+      margin-bottom: 24px;
+      flex-wrap: wrap;
+    }
+
+    .search-input {
+      flex: 1;
+      min-width: 250px;
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 12px;
+      padding: 12px 16px;
+      color: var(--text-main);
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      font-size: 0.95rem;
+      outline: none;
+      transition: all 0.25s;
+    }
+
+    .search-input:focus {
+      border-color: var(--neon-cyan);
+      box-shadow: 0 0 12px rgba(56, 189, 248, 0.15);
+      background: rgba(255, 255, 255, 0.05);
+    }
+
+    .status-select {
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 12px;
+      padding: 12px 16px;
+      color: var(--text-main);
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      font-size: 0.95rem;
+      outline: none;
+      cursor: pointer;
+      transition: all 0.25s;
+    }
+
+    .status-select:focus {
+      border-color: var(--neon-purple);
+      box-shadow: 0 0 12px rgba(192, 132, 252, 0.15);
+    }
+
+    .status-select option {
+      background: var(--bg-dark);
+      color: var(--text-main);
+    }
+
+    /* Table styling */
+    .table-container {
+      overflow-x: auto;
+      border-radius: 12px;
+      border: 1px solid rgba(255, 255, 255, 0.06);
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      text-align: left;
+      font-size: 0.95rem;
+    }
+
+    th {
+      background: rgba(255, 255, 255, 0.02);
+      padding: 16px;
+      font-family: 'Outfit', sans-serif;
+      font-weight: 600;
+      color: var(--text-muted);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+      text-transform: uppercase;
+      font-size: 0.8rem;
+      letter-spacing: 1px;
+    }
+
+    td {
+      padding: 16px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+      color: var(--text-main);
+    }
+
+    tr:last-child td {
+      border-bottom: none;
+    }
+
+    tr.passed-row {
+      background: rgba(16, 185, 129, 0.01);
+    }
+
+    tr.failed-row {
+      background: rgba(239, 68, 68, 0.01);
+    }
+
+    tr:hover {
+      background: rgba(255, 255, 255, 0.02);
+    }
+
+    .font-mono {
+      font-family: 'Courier New', Courier, monospace;
+      font-weight: 700;
+      color: #e5e7eb;
+    }
+
+    .font-medium {
+      font-weight: 500;
+    }
+
+    .font-bold {
+      font-weight: 700;
+    }
+
+    /* Badges */
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      padding: 4px 10px;
+      border-radius: 999px;
+      font-size: 0.75rem;
+      font-weight: 700;
+      letter-spacing: 0.5px;
+    }
+
+    .badge-category {
+      background: rgba(192, 132, 252, 0.1);
+      color: var(--neon-purple);
+      border: 1px solid rgba(192, 132, 252, 0.2);
+    }
+
+    .badge-pass {
+      background: rgba(16, 185, 129, 0.1);
+      color: var(--neon-green);
+      border: 1px solid rgba(16, 185, 129, 0.2);
+    }
+
+    .badge-fail {
+      background: rgba(239, 68, 68, 0.1);
+      color: var(--neon-red);
+      border: 1px solid rgba(239, 68, 68, 0.2);
+    }
+
+    .font-bold.text-blue { color: var(--neon-cyan); }
+    .font-bold.text-green { color: var(--neon-green); }
+    .font-bold.text-red { color: var(--neon-red); }
+  </style>
+</head>
+<body>
+
+  <!-- Ambient BG Glows -->
+  <div class="ambient-glow glow-1"></div>
+  <div class="ambient-glow glow-2"></div>
+
+  <div class="container">
+    <!-- Header -->
+    <header>
+      <div>
+        <h1>Yatzy Royale</h1>
+        <div class="subtitle">Unit Test Suite • Dice Detection Algorithm Validation</div>
+      </div>
+      <div style="display: flex; gap: 12px; align-items: center;">
+        <a href="https://github.com/clmcgrath/yatzy-royale" target="_blank" rel="noopener noreferrer" class="btn btn-icon" title="View Source on GitHub" style="width: 44px; height: 44px; display: flex; align-items: center; justify-content: center; background: rgba(255, 255, 255, 0.03); border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 12px; color: var(--text-muted); cursor: pointer; transition: all 0.25s;">
+          <svg class="icon" viewBox="0 0 24 24" fill="currentColor" style="width: 20px; height: 20px;">
+            <path d="M12 .297c-6.63 0-12 5.373-12 12 0 5.303 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61C4.422 18.07 3.633 17.7 3.633 17.7c-1.087-.744.084-.729.084-.729 1.205.084 1.838 1.236 1.838 1.236 1.07 1.835 2.809 1.305 3.495.998.108-.776.417-1.305.76-1.605-2.665-.3-5.466-1.332-5.466-5.93 0-1.31.465-2.38 1.235-3.22-.135-.303-.54-1.523.105-3.176 0 0 1.005-.322 3.3 1.23.96-.267 1.98-.399 3-.405 1.02.006 2.04.138 3 .405 2.28-1.552 3.285-1.23 3.285-1.23.645 1.653.24 2.873.12 3.176.765.84 1.23 1.91 1.23 3.22 0 4.61-2.805 5.625-5.475 5.92.42.36.81 1.096.81 2.22 0 1.606-.015 2.896-.015 3.286 0 .315.21.69.825.57C20.565 22.092 24 17.592 24 12.297c0-6.627-5.373-12-12-12"/>
+          </svg>
+        </a>
+        <a href="../index.html" class="btn btn-secondary">← Back to Scoresheet</a>
+      </div>
+
+    <!-- Dashboard Cards -->
+    <section class="dashboard-grid">
+      <div class="stat-card total">
+        <div class="stat-label">Total Specifications</div>
+        <div class="stat-value text-cyan" id="total-tests">0</div>
+      </div>
+      <div class="stat-card passed">
+        <div class="stat-label">Passed Tests</div>
+        <div class="stat-value text-green" id="passed-tests">0</div>
+      </div>
+      <div class="stat-card failed">
+        <div class="stat-label">Failed Tests</div>
+        <div class="stat-value text-red" id="failed-tests">0</div>
+      </div>
+      <div class="stat-card percent">
+        <div class="stat-label">Specs Integrity</div>
+        <div class="stat-value text-purple" id="pass-percentage">0%</div>
+      </div>
+    </section>
+
+    <!-- Progress Bar -->
+    <div class="progress-container">
+      <div class="progress-bar-fill" id="progress-bar-fill"></div>
+    </div>
+
+    <!-- Test List Card -->
+    <section class="test-card">
+      <!-- Search & Filters -->
+      <div class="filters-section">
+        <input type="text" id="filter-search" class="search-input" placeholder="Search by description or category...">
+        <select id="filter-status" class="status-select">
+          <option value="all">All Specs</option>
+          <option value="passed">Passed Spec Only</option>
+          <option value="failed">Failed Spec Only</option>
+        </select>
+      </div>
+
+      <!-- Test specifications table -->
+      <div class="table-container">
+        <table>
+          <thead>
+            <tr>
+              <th style="width: 50px;">#</th>
+              <th>Specification Details</th>
+              <th style="width: 150px;">Category</th>
+              <th style="width: 180px;">Dice State</th>
+              <th style="width: 100px;">Expected</th>
+              <th style="width: 100px;">Actual</th>
+              <th style="width: 120px;">Result</th>
+            </tr>
+          </thead>
+          <tbody id="tests-tbody">
+            <!-- Populated dynamically by tests.js -->
+          </tbody>
+        </table>
+      </div>
+    </section>
+  </div>
+
+  <!-- Mock STATE object globally to prevent app.js failures -->
+  <script>
+    window.STATE = {
+      scores: [
+        { yahtzee: null },
+        { yahtzee: null }
+      ],
+      activePlayer: 0
+    };
+  </script>
+
+  <!-- Load main app.js code to obtain calculatePotentialScore -->
+  <script src="../src/scripts/app.js"></script>
+
+  <!-- Load and execute the unit tests -->
+  <script src="tests.js"></script>
+</body>
+</html>
