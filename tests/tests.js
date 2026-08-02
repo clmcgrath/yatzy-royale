@@ -145,6 +145,27 @@ const TEST_SPEC = [
     dice: ["1", "2", "3", "4", "5"],
     expected: 15,
     description: "Defensive Type Normalization: Chance with string array"
+  },
+  {
+    category: 'smallStraight',
+    dice: [6, 6, 6, 6, 6],
+    expected: 30,
+    description: "Joker Activation: Subsequent Yahtzee with a string '50' still enables Joker scoring",
+    stateOverride: {
+      activePlayer: 0,
+      playerScore: { yahtzee: "50", yahtzeeBonuses: 0 }
+    }
+  },
+  {
+    category: 'yahtzeeBonus',
+    dice: [6, 6, 6, 6, 6],
+    expected: 1,
+    description: "Bonus Tracking: Subsequent Yahtzee increments bonus counter when initial Yahtzee is already scored",
+    stateOverride: {
+      activePlayer: 0,
+      playerScore: { yahtzee: 50, yahtzeeBonuses: 0 }
+    },
+    bonusCheck: true
   }
 ];
 
@@ -156,8 +177,32 @@ function runTestSuite() {
   let passes = 0;
   
   TEST_SPEC.forEach((test, idx) => {
+    const originalActivePlayer = STATE.activePlayer;
+    const originalScores = JSON.parse(JSON.stringify(STATE.scores));
+    const originalDice = [...STATE.dice];
+
+    if (test.stateOverride) {
+      const testPlayer = test.stateOverride.activePlayer ?? 0;
+      STATE.activePlayer = testPlayer;
+      STATE.scores[testPlayer] = {
+        ...STATE.scores[testPlayer],
+        ...test.stateOverride.playerScore
+      };
+    }
+
     // Run the actual detection function from app.js
-    const actual = calculatePotentialScore(test.category, test.dice);
+    let actual;
+    if (test.bonusCheck) {
+      STATE.dice = (test.dice || []).map(Number);
+      checkSubsequentYahtzeeBonus();
+      actual = STATE.scores[STATE.activePlayer].yahtzeeBonuses;
+    } else {
+      actual = calculatePotentialScore(test.category, test.dice);
+    }
+
+    STATE.activePlayer = originalActivePlayer;
+    STATE.scores = originalScores;
+    STATE.dice = originalDice;
     const passed = actual === test.expected;
     
     if (passed) passes++;

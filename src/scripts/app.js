@@ -172,8 +172,8 @@ function calculatePotentialScore(category, dice) {
   const isYahtzeeRolled = Object.values(counts).some(c => c === 5);
   
   // Rule details for Joker
-  const hasScoredYahtzee = STATE.scores[STATE.activePlayer].yahtzee === 50;
-  const isJokerActive = isYahtzeeRolled && hasScoredYahtzee;
+  const playerState = STATE.scores[STATE.activePlayer];
+  const isJokerActive = isYahtzeeRolled && canClaimSubsequentYahtzeeBonus(playerState);
 
   // 1. Upper Section Items
   if (category === 'aces') return getUpperSum(1, normalizedDice);
@@ -228,6 +228,12 @@ function calculatePotentialScore(category, dice) {
   }
 
   return 0;
+}
+
+function canClaimSubsequentYahtzeeBonus(playerState) {
+  const hasLockedInitialYahtzee = Number(playerState?.yahtzee) === 50;
+  const hasExistingBonuses = Number(playerState?.yahtzeeBonuses) > 0;
+  return hasLockedInitialYahtzee || hasExistingBonuses;
 }
 
 function getUpperSum(value, dice) {
@@ -335,8 +341,8 @@ function checkSubsequentYahtzeeBonus() {
   const isYahtzee = diceValues.every(v => v === diceValues[0]);
   const playerState = STATE.scores[STATE.activePlayer];
   
-  // If player rolled 5-of-a-kind, and has ALREADY scored 50 in their Yahtzee box
-  if (isYahtzee && playerState.yahtzee === 50) {
+  // If player rolled 5-of-a-kind and has already unlocked subsequent Yahtzee bonus
+  if (isYahtzee && canClaimSubsequentYahtzeeBonus(playerState)) {
     playerState.yahtzeeBonuses++;
     playVictorySound();
   }
